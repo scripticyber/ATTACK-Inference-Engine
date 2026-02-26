@@ -16,7 +16,7 @@ Real-time forensic inference engine that maps raw telemetry (Sysmon, Zeek, Windo
 ## Quick Start (local)
 
 ```bash
-git clone https://github.com/YOURUSERNAME/ATTACK-Inference-Engine.git
+git clone https://github.com/scripticyber/ATTACK-Inference-Engine.git
 cd ATTACK-Inference-Engine
 docker-compose up -d
 poetry install    # or pip install -r requirements.txt
