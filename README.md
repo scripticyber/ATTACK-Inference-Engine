@@ -25,7 +25,7 @@ git clone https://github.com/scripticyber/ATTACK-Inference-Engine.git
 cd ATTACK-Inference-Engine
 
 # Option 1: pip
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate    # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
