@@ -33,4 +33,4 @@ pip install -r requirements.txt
 # poetry install
 
 # Run basic pipeline on sample data
-python src/main.py --input data/samples/
+python3 src/main.py --input data/samples/
