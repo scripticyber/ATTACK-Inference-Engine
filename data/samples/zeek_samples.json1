@@ -1,3 +1,0 @@
-{"ts": "2025-02-20T11:20:45.678901", "uid": "Cabc123def456ghi7", "id.orig_h": "192.168.1.100", "id.resp_h": "142.250.190.174", "proto": "tcp", "service": "ssl", "duration": 2.345, "orig_bytes": 512, "resp_bytes": 20480}
-{"ts": "2025-02-21T15:10:22.345678", "uid": "Cxyz789abc123def4", "id.orig_h": "10.0.0.50", "id.resp_h": "185.220.101.12", "proto": "tcp", "service": "-", "duration": 120.567, "orig_bytes": 1024, "resp_bytes": 4096}
-{"ts": "2025-02-22T08:55:11.234567", "uid": "Cdef456ghi789jkl0", "id.orig_h": "192.168.10.20", "id.resp_h": "8.8.8.8", "proto": "udp", "service": "dns", "duration": 0.045, "orig_bytes": 45, "resp_bytes": 120}
