@@ -1,0 +1,8 @@
+pyyaml>=6.0
+pandas>=2.0
+scikit-learn>=1.3
+xgboost>=2.0
+shap>=0.45
+pgmpy>=0.1.25     # for simple Bayesian networks
+python-dotenv>=1.0
+argparse          # usually built-in, but explicit

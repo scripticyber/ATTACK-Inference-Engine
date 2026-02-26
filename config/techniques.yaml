@@ -1,0 +1,32 @@
+# MITRE ATT&CK technique priors & simple indicators (for MVP)
+T1059:  # Command and Scripting Interpreter
+  name: Command and Scripting Interpreter
+  prior: 0.12
+  keywords:
+    - powershell
+    - cmd.exe
+    - wscript
+    - cscript
+
+T1059.001:  # PowerShell
+  name: PowerShell
+  prior: 0.18
+  keywords:
+    - -ExecutionPolicy
+    - Bypass
+    - IEX
+    - Invoke-WebRequest
+
+T1218:  # Signed Binary Proxy Execution
+  name: Signed Binary Proxy Execution
+  prior: 0.08
+  keywords:
+    - rundll32.exe
+    - regsvr32.exe
+
+T1071:  # Application Layer Protocol
+  name: Application Layer Protocol
+  prior: 0.10
+  indicators:
+    - high_duration_conn
+    - unusual_port
