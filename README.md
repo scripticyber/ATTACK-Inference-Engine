@@ -1,23 +1,36 @@
 # ATT&CK Inference Engine (AIE)
 
-Real-time forensic inference engine that maps raw telemetry (Sysmon, Zeek, Windows logs) to MITRE ATT&CK techniques with probabilistic confidence scores.
+**Real-time probabilistic MITRE ATT&CK technique inference from host & network telemetry**
 
-## Goals
-- Dynamic, non-signature-based technique attribution
-- Probabilistic & explainable inference
-- Local-first MVP → scalable architecture
+This project aims to build a forensic engine that:
+- Ingests Sysmon, Zeek (conn.log, dns.log, etc.), ETW, Windows Event Logs
+- Normalizes to a common schema
+- Extracts behavioral features
+- Uses Bayesian networks + ML classifiers to assign dynamic probability scores to ATT&CK techniques
+- Provides explainability (SHAP, evidence paths)
+- Outputs to Elasticsearch + basic dashboard views
 
-## Current MVP Scope
-- Normalize Sysmon + Zeek events
-- Extract behavioral features
-- Bayesian + ML-based technique probability estimation
-- Output to Elasticsearch + basic dashboard
+**Status**: Early MVP – local file-based processing only (no Kafka/Flink yet). Designed to be extensible.
 
-## Quick Start (local)
+## Features (planned / partial)
+- Dynamic (non-signature) technique attribution
+- Probabilistic confidence scores that update with new events
+- Explainable attributions
+- Local-first (runs on laptop), future scalable
+
+## Quick Start (Local)
 
 ```bash
 git clone https://github.com/scripticyber/ATTACK-Inference-Engine.git
 cd ATTACK-Inference-Engine
-docker-compose up -d
-poetry install    # or pip install -r requirements.txt
+
+# Option 1: pip
+python -m venv .venv
+source .venv/bin/activate    # or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
+
+# Option 2: poetry (recommended)
+# poetry install
+
+# Run basic pipeline on sample data
 python src/main.py --input data/samples/
