@@ -1,0 +1,2 @@
+{"EventTime": "2025-02-20T10:15:22.123Z", "EventID": 1, "Computer": "WORKSTATION-01", "EventData": {"Image": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\""}}
+{"EventTime": "2025-02-21T14:45:10.456Z", "EventID": 1, "Computer": "WORKSTATION-02", "EventData": {"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell.exe -ExecutionPolicy Bypass -Command IEX (...)"}}
